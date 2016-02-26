@@ -160,6 +160,13 @@ AddOption('--ovdebug',
     action    = 'store_true')
 runnerEnv['DEBUGOPT'] = GetOption('debugOpt')
 
+# Adding option for Tutornet
+AddOption('--tutornetmotes',
+    dest      = 'tutornetmotes',
+    default   = '',
+    action    = 'store')
+runnerEnv['TUTORNETOPT'] = GetOption('tutornetmotes')
+
 # These options are used only by the web runner. We define them here for
 # simplicity, but they must be removed from non-web use in the runner 
 # SConscript.

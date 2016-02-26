@@ -33,7 +33,7 @@ class OpenVisualizerApp(object):
     top-level functionality for several UI clients.
     '''
     
-    def __init__(self,confdir,datadir,logdir,simulatorMode,numMotes,trace,debug,simTopology,iotlabmotes, pathTopo):
+    def __init__(self,confdir,datadir,logdir,simulatorMode,numMotes,trace,debug,simTopology,iotlabmotes,tutornetmotes,pathTopo):
         
         # store params
         self.confdir              = confdir
@@ -44,6 +44,7 @@ class OpenVisualizerApp(object):
         self.trace                = trace
         self.debug                = debug
         self.iotlabmotes          = iotlabmotes
+        self.tutornetmotes        = tutornetmotes
         self.pathTopo             = pathTopo
         
         # local variables
@@ -91,7 +92,12 @@ class OpenVisualizerApp(object):
             self.moteProbes       = [
                 moteProbe.moteProbe(iotlabmote=p) for p in self.iotlabmotes.split(',')
             ]
+        elif self.tutornetmotes:
+            # in "Tutornet" mode, motes are connected to TCP ports
             
+            self.moteProbes       = [
+                moteProbe.moteProbe(tutornetmote=p) for p in self.tutornetmotes.split(',')
+            ] 
         else:
             # in "hardware" mode, motes are connected to the serial port
             
@@ -261,6 +267,7 @@ def main(parser=None):
         debug           = argspace.debug,
         simTopology     = argspace.simTopology,
         iotlabmotes     = argspace.iotlabmotes,
+        tutornetmotes   = argspace.tutornetmotes,
         pathTopo        = argspace.pathTopo,
     )
 
@@ -306,6 +313,12 @@ def _addParserArgs(parser):
         default    = '',
         action     = 'store',
         help       = 'comma-separated list of IoT-LAB motes (e.g. "wsn430-9,wsn430-34,wsn430-3")'
+    )
+    parser.add_argument('-tutor', '--tutornetmotes',
+        dest       = 'tutornetmotes',
+        default    = '',
+        action     = 'store',
+        help       = 'comma-separated list of Tutornet motes (e.g. "1,2,3,10,11")'
     )
     parser.add_argument('-i', '--pathTopo', 
         dest       = 'pathTopo',

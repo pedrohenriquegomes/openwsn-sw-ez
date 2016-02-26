@@ -20,6 +20,7 @@ import serial
 import socket
 import time
 import sys
+import datetime
 
 from   pydispatch import dispatcher
 import OpenHdlc
@@ -76,13 +77,15 @@ class moteProbe(threading.Thread):
     MODE_SERIAL    = 'serial'
     MODE_EMULATED  = 'emulated'
     MODE_IOTLAB    = 'IoT-LAB'
+    MODE_TUTORNET  = 'Tutornet'
     MODE_ALL       = [
         MODE_SERIAL,
         MODE_EMULATED,
         MODE_IOTLAB,
+		MODE_TUTORNET,
     ]
     
-    def __init__(self,serialport=None,emulatedMote=None,iotlabmote=None):
+    def __init__(self,serialport=None,emulatedMote=None,iotlabmote=None,tutornetmote=None):
         
         # verify params
         if   serialport:
@@ -97,6 +100,10 @@ class moteProbe(threading.Thread):
             assert not serialport
             assert not emulatedMote
             self.mode             = self.MODE_IOTLAB
+        elif tutornetmote:
+            assert not serialport
+            assert not emulatedMote
+            self.mode             = self.MODE_TUTORNET
         else:
             raise SystemError()
         
@@ -111,6 +118,9 @@ class moteProbe(threading.Thread):
         elif self.mode==self.MODE_IOTLAB:
             self.iotlabmote       = iotlabmote
             self.portname         = 'IoT-LAB{0}'.format(iotlabmote)
+        elif self.mode==self.MODE_TUTORNET:
+            self.tutornetmote     = tutornetmote
+            self.portname         = 'Tutornet-{0}'.format(tutornetmote)
         else:
             raise SystemError()
         
@@ -137,7 +147,10 @@ class moteProbe(threading.Thread):
         # give this thread a name
         self.name                 = 'moteProbe@'+self.portname
         
-        if self.mode in [self.MODE_EMULATED,self.MODE_IOTLAB]:
+        # create a file for output the log
+        self.outputfile           = open("./Log_{0}.txt".format(self.portname.replace('/','')), 'w')
+
+        if self.mode in [self.MODE_EMULATED,self.MODE_IOTLAB,self.MODE_TUTORNET]:
             # Non-daemonized moteProbe does not consistently die on close(),
             # so ensure moteProbe does not persist.
             self.daemon           = True
@@ -172,6 +185,9 @@ class moteProbe(threading.Thread):
                 elif self.mode==self.MODE_IOTLAB:
                     self.serial = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                     self.serial.connect((self.iotlabmote,20000))
+                elif self.mode==self.MODE_TUTORNET:
+                    self.serial = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                    self.serial.connect(('testbed.usc.edu',int(self.tutornetmote)+10000))
                 else:
                     raise SystemError()
                 
@@ -183,6 +199,8 @@ class moteProbe(threading.Thread):
                             rxBytes = self.serial.read()
                         elif self.mode==self.MODE_IOTLAB:
                             rxBytes = self.serial.recv(1024)
+                        elif self.mode==self.MODE_TUTORNET:
+                            rxBytes = self.serial.recv(1)
                         else:
                             raise SystemError()
                     except Exception as err:
@@ -223,6 +241,8 @@ class moteProbe(threading.Thread):
                                 try:
                                     tempBuf = self.inputBuf
                                     self.inputBuf        = self.hdlc.dehdlcify(self.inputBuf)
+                                    self.outputfile.write("{0},{1},{2},\n".format(str(datetime.datetime.now()), u.formatStringBuf(self.inputBuf),self.inputBuf))
+
                                     if log.isEnabledFor(logging.DEBUG):
                                         log.debug("{0}: {2} dehdlcized input: {1}".format(self.name, u.formatStringBuf(self.inputBuf), u.formatStringBuf(tempBuf)))
                                 except OpenHdlc.HdlcException as err:
@@ -232,7 +252,10 @@ class moteProbe(threading.Thread):
                                         with self.outputBufLock:
                                             if self.outputBuf:
                                                 outputToWrite = self.outputBuf.pop(0)
-                                                self.serial.write(outputToWrite)
+                                                if self.mode==self.MODE_TUTORNET:
+                                                    self.serial.send(outputToWrite)
+                                                else:
+                                                    self.serial.write(outputToWrite)
                                     else:
                                         # dispatch
                                         dispatcher.send(
