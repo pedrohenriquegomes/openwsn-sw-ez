@@ -1,6 +1,6 @@
 # DO NOT EDIT DIRECTLY!
 # This file was generated automatically by GenStackDefines.py
-# on Tue, 17 Nov 2015 10:55:12
+# on Sun, 06 Mar 2016 16:58:05
 #
 
 components = {
@@ -43,7 +43,6 @@ components = {
   36: "UINJECT",
   37: "RRT",
   38: "SECURITY",
-  39: "LIGHT",
 }
 
 errorDescriptions = {
@@ -106,7 +105,12 @@ errorDescriptions = {
   57: "wrong CRC in input Buffer (input length {0})",
   58: "synchronized when received a packet",
   59: "security error on frameType {0}, code location {1}",
-  60: "flooding packet sent, seq {0}, rank {1}",
-  61: "flooding packet rcv, seq {0}, rank {1}",
-  62: "flooding packet fw, seq {0}, rank {1}",
+  60: "preferred parent changed to {0}",
+  61: "no neighbor found, code location {0}",
+  64: "uinject snd pkt to {0}",
+  65: "uinject rcv pkt from {0}, delay {1}",
+  66: "uinject fwd pkt from {0} to {1}",
+  80: "wrog dsn {0}, code location {1}",
+  81: "new blacklist from parent: {0}",
+  82: "packet lost at slotoffset {0}, frequency {1}",
 }
