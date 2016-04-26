@@ -241,7 +241,7 @@ class moteProbe(threading.Thread):
                                 try:
                                     tempBuf = self.inputBuf
                                     self.inputBuf        = self.hdlc.dehdlcify(self.inputBuf)
-                                    self.outputfile.write("{0},{1},{2},\n".format(str(datetime.datetime.now()), u.formatStringBuf(self.inputBuf),self.inputBuf))
+                                    self.outputfile.write("{0},{1},{2},\n".format(str(datetime.datetime.now()), u.formatStringBuf(self.inputBuf),tempBuf))
 
                                     if log.isEnabledFor(logging.DEBUG):
                                         log.debug("{0}: {2} dehdlcized input: {1}".format(self.name, u.formatStringBuf(self.inputBuf), u.formatStringBuf(tempBuf)))

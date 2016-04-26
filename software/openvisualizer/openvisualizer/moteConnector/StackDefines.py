@@ -1,6 +1,6 @@
 # DO NOT EDIT DIRECTLY!
 # This file was generated automatically by GenStackDefines.py
-# on Sun, 06 Mar 2016 16:58:05
+# on Tue, 26 Apr 2016 14:18:07
 #
 
 components = {
@@ -14,6 +14,7 @@ components = {
    7: "RADIO",
    8: "IEEE802154",
    9: "IEEE802154E",
+  48: "BLACKLIST",
   10: "SIXTOP_TO_IEEE802154E",
   11: "IEEE802154E_TO_SIXTOP",
   12: "SIXTOP",
@@ -106,11 +107,17 @@ errorDescriptions = {
   58: "synchronized when received a packet",
   59: "security error on frameType {0}, code location {1}",
   60: "preferred parent changed to {0}",
-  61: "no neighbor found, code location {0}",
-  64: "uinject snd pkt to {0}",
-  65: "uinject rcv pkt from {0}, delay {1}",
-  66: "uinject fwd pkt from {0} to {1}",
+  64: "no neighbor found, code location {0}",
+  61: "uinject snd pkt to {0}, counter {1}",
+  62: "uinject rcv pkt from {0}, delay {1}",
+  63: "uinject fwd pkt from {0} to {1}",
   80: "wrog dsn {0}, code location {1}",
   81: "new blacklist from parent: {0}",
-  82: "packet lost at slotoffset {0}, frequency {1}",
+  82: "packet received dsn {0}, blacklist {1}",
+  83: "packet sent dsn {0}, blacklist {1}",
+  84: "invalid neighbor {0}, code location {1}",
+  85: "exploring bad channels, blacklist {0} row {1}",
+  86: "updated reward SUCCESS, channel {0}, row {1}",
+  87: "updated reward FAILED, channel {0}, row {1}",
+  88: "blacklist desyncronized, row {0}",
 }
